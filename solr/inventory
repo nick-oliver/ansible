@@ -1,0 +1,2 @@
+[solr]
+ubu-solr ansible_user=ansible

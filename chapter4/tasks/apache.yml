@@ -1,0 +1,19 @@
+---
+  - name: Ensure that Apache is installed
+    package:
+      name:
+        - "{{ apache_package }}"
+      state: prese
+  # - name: Copy test config file.
+  #   copy:
+  #     src: files/test.conf
+  #     dest: /etc/httpd/conf.d/test.conf
+  #   notify:
+  #     - restart apac
+  - name: Make sure handlers are flushed immediately.
+    meta: flush_handle
+  - name: Make sure Apache is started now and at boot
+    service:
+      name: "{{ apache_service }}"
+      state: started
+      enabled: true

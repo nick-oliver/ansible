@@ -1,0 +1,39 @@
+---
+- name: Install Ubuntu Apache
+  hosts: ubuntu
+  become: true
+
+  vars:
+    apache_package: apache2
+    apache_service: apache2
+    apache_config_dir: /etc/apache2/sites-enabled
+
+
+  handlers:
+    - name: restart apache
+      service:
+        name: "{{ apache_service }}"
+        state: restarted
+
+  tasks:
+    - name: Ensure that Apache is installed
+      package:
+        name:
+          - "{{ apache_package }}"
+        state: present
+
+    # - name: Copy test config file.
+    #   copy:
+    #     src: files/test.conf
+    #     dest: /etc/httpd/conf.d/test.conf
+    #   notify:
+    #     - restart apache
+
+    - name: Make sure handlers are flushed immediately.
+      meta: flush_handlers
+
+    - name: Make sure Apache is started now and at boot
+      service:
+        name: "{{ apache_service }}"
+        state: started
+        enabled: true

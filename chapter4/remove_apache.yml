@@ -1,0 +1,16 @@
+---
+- name: Remove Apache
+  hosts: all
+  become: true
+
+  tasks:
+  - name: ensure test.conf is removed
+    file:
+      path: /etc/httpd/conf.d/test.conf
+      state: absent
+    
+  - name: Ensure that Apache is removed
+    yum:
+      name:
+        - httpd
+      state: absent

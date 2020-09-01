@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+
+  tasks:
+    - name: Register the output of the 'uptime' command.
+      command: uptime
+      register: system_uptime
+
+    - name:
+      debug:
+        var: system_uptime.stdout
+
+    - name:
+      debug:
+        msg: "Command resulted in a change!"
+      when: system_uptime is changed
