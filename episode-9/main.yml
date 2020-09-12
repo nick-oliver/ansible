@@ -6,7 +6,7 @@
     - name: restart sshd
       service:
         name: sshd
-        start: restarted
+        state: restarted
 
   tasks:
     - name: Tell SELinux about SSH's new port.
@@ -22,6 +22,7 @@
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
         state: present
+        validate: 'sshd -T -f %s'
       with_items:
         - regexp: "^PasswordAuthentication"
           line: "PasswordAuthentication no"
@@ -30,3 +31,111 @@
         - regexp: "^Port"
           line: "Port 2849"
       notify: restart sshd
+
+    - name: Add user nick.oliver
+      user:
+        name: nick.oliver
+        comment: Nick oliver
+        uid: 1419
+        group: wheel
+        shell: /bin/bash
+
+    - name: Create a 4096-bit SSH Key for Nick Oliver
+      user:
+        name: nick.oliver
+        generate_ssh_key: yes
+        ssh_key_bits: 4096
+        ssh_key_file: .ssh/id_rsa
+
+    - name: Add user nick.oliver to sudoers.d
+      lineinfile:
+        path: /etc/sudoers.d/nwoliver
+        line: 'nick.oliver ALL=(ALL) NOPASSWD: ALL'
+        state: present
+        mode: 0440
+        create: yes
+        validate: 'visudo -cf %s'
+
+    - name: create authorized key file
+      authorized_key:
+        user: nick.oliver
+        state: present
+        key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
+
+    - name: Install VIM.
+      yum:
+        name: vim
+        state: present
+
+    - name: Add content to .vimrc
+      template:
+        src: /home/ansible/Documents/dotvimrc
+        dest: /home/nick.oliver/.vimrc
+        owner: nick.oliver
+        group: wheel
+        mode: 0640
+
+    - name: Delete .bashrc
+      file:
+        path: /home/nick.oliver/.bashrc
+        state: absent
+
+    - name: Add new .bashrc
+      template:
+        src: /home/ansible/Documents/bashrc.sh
+        dest: /home/nick.oliver/.bashrc
+        owner: nick.oliver
+        group: wheel
+        mode: 0644
+
+    - name: Install ntp (for time synchronization).
+      yum:
+        name: ntp
+        state: present
+
+    - name: Ensure ntp is running
+      service:
+        name: ntpd
+        state: started
+        enabled: yes
+
+    - name: Install packages
+      yum:
+        name:
+          - mlocate
+          - tree
+          - sos
+          - wget
+          - tree
+          - open-vm-tools
+          - net-tools
+        state: present
+
+    - name: install the 'Development tools' package group
+      yum:
+        name: '@Development tools'
+        state: present
+
+    - name: Remove unused packages.
+      package:
+        name:
+          - httpd
+          - nano
+          - mailutils
+        state: absent
+
+    - name: change or modify file permissions.
+      file:
+        path: /etc/ssh/sshd_config
+        mode: 0600
+
+    - name: Set up autoupdates
+      yum:
+        name: yum-cron
+        state: present
+
+    - name: Ensure autoupdates are running
+      service:
+        name: yum-cron
+        state: started
+        enabled: yes

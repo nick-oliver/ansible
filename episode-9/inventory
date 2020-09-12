@@ -4,7 +4,7 @@
 
 #Centos Servers
 [centos]
-174.129.126.4
+34.228.241.243
 
 # Group 'multi' with all servers
 [multi:children]
@@ -12,5 +12,5 @@ ubuntu
 centos
 
 # Variables that will be applied to all servers
-[multi:vars]
-ansible_user=centos
+# [multi:vars]
+# ansible_user=centos
