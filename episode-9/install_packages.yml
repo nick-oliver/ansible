@@ -1,0 +1,47 @@
+---
+- hosts: centos
+  become: true
+
+  tasks:
+    - name: Install VIM.
+      yum:
+        name: vim
+        state: present
+
+    - name: Add content to .vimrc
+      template:
+        src: /home/ansible/Documents/dotvimrc
+        dest: /home/centos/.vimrc
+        owner: centos
+        group: centos
+        mode: 0640
+
+    - name: Delete .bashrc
+      file:
+        path: /home/centos/.bashrc
+        state: absent
+
+    - name: Add new .bashrc
+      template:
+        src: /home/ansible/Documents/bashrc.sh
+        dest: /home/centos/.bashrc
+        owner: centos
+        group: centos
+        mode: 0644
+
+    - name: Install packages
+      yum:
+        name:
+          - mlocate
+          - tree
+          - sos
+          - wget
+          - tree
+          - open-vm-tools
+          - net-tools
+        state: present
+
+    - name: install the 'Development tools' package group
+      yum:
+        name: '@Development tools'
+        state: present

@@ -4,7 +4,7 @@
 
 #Centos Servers
 [centos]
-34.228.241.243
+3.86.44.134
 
 # Group 'multi' with all servers
 [multi:children]

@@ -32,62 +32,6 @@
           line: "Port 2849"
       notify: restart sshd
 
-    - name: Add user nick.oliver
-      user:
-        name: nick.oliver
-        comment: Nick oliver
-        uid: 1419
-        group: wheel
-        shell: /bin/bash
-
-    - name: Create a 4096-bit SSH Key for Nick Oliver
-      user:
-        name: nick.oliver
-        generate_ssh_key: yes
-        ssh_key_bits: 4096
-        ssh_key_file: .ssh/id_rsa
-
-    - name: Add user nick.oliver to sudoers.d
-      lineinfile:
-        path: /etc/sudoers.d/nwoliver
-        line: 'nick.oliver ALL=(ALL) NOPASSWD: ALL'
-        state: present
-        mode: 0440
-        create: yes
-        validate: 'visudo -cf %s'
-
-    - name: create authorized key file
-      authorized_key:
-        user: nick.oliver
-        state: present
-        key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
-
-    - name: Install VIM.
-      yum:
-        name: vim
-        state: present
-
-    - name: Add content to .vimrc
-      template:
-        src: /home/ansible/Documents/dotvimrc
-        dest: /home/nick.oliver/.vimrc
-        owner: nick.oliver
-        group: wheel
-        mode: 0640
-
-    - name: Delete .bashrc
-      file:
-        path: /home/nick.oliver/.bashrc
-        state: absent
-
-    - name: Add new .bashrc
-      template:
-        src: /home/ansible/Documents/bashrc.sh
-        dest: /home/nick.oliver/.bashrc
-        owner: nick.oliver
-        group: wheel
-        mode: 0644
-
     - name: Install ntp (for time synchronization).
       yum:
         name: ntp
@@ -98,23 +42,6 @@
         name: ntpd
         state: started
         enabled: yes
-
-    - name: Install packages
-      yum:
-        name:
-          - mlocate
-          - tree
-          - sos
-          - wget
-          - tree
-          - open-vm-tools
-          - net-tools
-        state: present
-
-    - name: install the 'Development tools' package group
-      yum:
-        name: '@Development tools'
-        state: present
 
     - name: Remove unused packages.
       package:
@@ -139,3 +66,25 @@
         name: yum-cron
         state: started
         enabled: yes
+
+    - name: Install firewalld
+      package:
+        name: firewalld
+        state: present
+
+    - name: Ensure that firewalld is running
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: Configure ports in firewalld
+      firewalld:
+        state: "{{ item.state }}"
+        port: "{{ item.port }}"
+        zone: external
+        immediate: yes
+        permanent: yes
+      with_items:
+        - { state: 'enabled', port: 2849/tcp }
+        - { state: 'enabled', port: 123/udp }
