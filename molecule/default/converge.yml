@@ -1,0 +1,5 @@
+---
+- name: Converge
+  hosts: all
+
+- import_playbook: ../../sample_httpd_install.yml

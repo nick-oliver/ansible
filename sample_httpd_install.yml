@@ -1,0 +1,43 @@
+---
+- name: Install and prepare Apache
+  hosts: all
+  become: true
+
+  handlers:
+    - name: restart apache
+      service:
+        name: httpd
+        state: restarted
+
+  tasks:
+    - name: Install Apache
+      package:
+        name: httpd
+        state: present
+
+    - name: ensure apache service is running and starts at boot.
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: create home page
+      copy:
+        content:
+          <html>
+          <head><title>Hello World!!</title></head>
+          <body>Hello World</body>
+          </html>
+        dest: "/var/www/html/index.html"
+        mode: 0664
+      notify: restart apache
+
+    # - name: check services
+    #   service_facts:
+    # - name: firewall apache
+    #   firewalld:
+    #     service: http
+    #     immediate: true
+    #     permanent: true
+    #     state: enabled
+    #   when: ansible_facts.services['firewalld.service'].state == "running"
