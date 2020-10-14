@@ -1,4 +1,17 @@
+# Ubuntu Servers
+[ubuntu]
+
 #Centos Servers
 [centos]
-18.222.79.18
 54.165.14.66
+18.222.79.18
+
+
+# Group 'multi' with all servers
+[multi:children]
+ubuntu
+centos
+
+# Variables that will be applied to all servers
+# [multi:vars]
+# ansible_user=centos:wq
