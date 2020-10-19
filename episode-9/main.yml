@@ -1,6 +1,5 @@
 ---
 - hosts: centos
-  become: true
 
   handlers:
     - name: restart sshd

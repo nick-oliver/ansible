@@ -1,6 +1,5 @@
 ---
 - hosts: centos
-  become: true
 
   tasks:
     - name: Install VIM.
