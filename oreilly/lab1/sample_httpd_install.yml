@@ -1,6 +1,6 @@
 ---
 - name: Install and prepare Apache
-  hosts: all
+  hosts: centos
   become: true
 
   handlers:
@@ -32,12 +32,10 @@
         mode: 0664
       notify: restart apache
 
-    # - name: check services
-    #   service_facts:
-    # - name: firewall apache
-    #   firewalld:
-    #     service: http
-    #     immediate: true
-    #     permanent: true
-    #     state: enabled
-    #   when: ansible_facts.services['firewalld.service'].state == "running"
+    - name: Open firewall ports for apache
+      firewalld:
+        service: http
+        immediate: true
+        permanent: true
+        state: enabled
+...

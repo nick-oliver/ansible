@@ -1,0 +1,16 @@
+---
+- name: Deploy services
+  hosts: centos
+  taske:
+  - name: Read the tasks.yml file to find out what to do
+    include: tasks.yml
+    vars:
+      package: samba
+      service: smb
+      state: started
+    register: output
+
+  - name: debugs the included tasks
+    debug:
+      var: output
+...
