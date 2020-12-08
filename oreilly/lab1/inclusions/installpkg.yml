@@ -1,6 +1,8 @@
 ---
 - name: install some packages
   hosts: centos
+  become: true
+
   tasks:
     - name: include packages
       include_vars: packages.yml

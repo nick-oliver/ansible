@@ -1,0 +1,19 @@
+---
+- hosts: centos
+  tasks:
+    - name: check mariadb status
+      command: /usr/bin/systemctl is-active mariadb
+      ignore_errors: yes
+      register: result  #this stores information about the result in the result variable
+
+    - name:  install http if mariadb is active
+      yum:
+        name: httpd
+        state: installed
+      when: result.rc == 0
+
+    - name: start httpd
+      service:
+        name: httpd
+        state: started
+...

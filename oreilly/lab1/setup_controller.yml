@@ -1,0 +1,15 @@
+---
+- hosts: centos-1
+  tasks:
+    - name: install packstack
+      yum:
+        name: openstack-packstack
+        state: latest
+      register: result
+
+    - name: generate answers file if packstack is installed
+      command:
+        packstack --gen-answer-file /root/answers.txt
+      when: result.rc == 0
+...
+

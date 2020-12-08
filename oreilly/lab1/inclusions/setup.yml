@@ -1,7 +1,7 @@
 ---
 - name: Deploy services
   hosts: centos
-  taske:
+  tasks:
   - name: Read the tasks.yml file to find out what to do
     include: tasks.yml
     vars:

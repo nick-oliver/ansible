@@ -6,6 +6,12 @@
 centos-1
 centos-2
 
+[lamp]
+centos-1
+
+[file]
+centos-2
+
 # Group 'multi' with all servers
 [multi:children]
 ubuntu
